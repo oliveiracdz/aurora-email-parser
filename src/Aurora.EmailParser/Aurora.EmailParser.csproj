@@ -7,6 +7,7 @@
 		<Authors>oliveiracdz@hotmail.com</Authors>
 		<PackageProjectUrl>https://github.com/oliveiracdz/aurora-email-parser</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/oliveiracdz/aurora-email-parser</RepositoryUrl>
+		<UserSecretsId>37d5064e-1d32-4809-adee-6a6f853b2364</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
