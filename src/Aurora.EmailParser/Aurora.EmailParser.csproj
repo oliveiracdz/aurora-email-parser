@@ -1,9 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<Version>0.0.2</Version>
+		<Version>0.0.1</Version>
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<Authors>oliveiracdz@hotmail.com</Authors>
+		<PackageProjectUrl>https://github.com/oliveiracdz/aurora-email-parser</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/oliveiracdz/aurora-email-parser</RepositoryUrl>
 	</PropertyGroup>
 
 	<ItemGroup>
