@@ -42,6 +42,20 @@ namespace Aurora.EmailParser
 
                     previousNodes.Clear();
                 }
+                // TODO: 
+                //else if (TryFindQuoteNode(item.ChildNodes, out var quote))
+                //{
+                //    part = quote;
+
+                //    yield return SanitizeText(quote.InnerText);
+
+                //    foreach (var x in ExtractChain(quote.ParentNode))
+                //    {
+                //        yield return x;
+                //    }
+
+                //    previousNodes.Clear();
+                //}
 
                 previousNodes.Add(part);
             }
