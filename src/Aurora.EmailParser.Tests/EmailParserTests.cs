@@ -36,9 +36,9 @@ namespace Aurora.EmailParser.Tests
             context.Chain.Count().ShouldBe(1);
         }
 
-        private static SetupContext Setup(string teste)
+        private static SetupContext Setup(string filename)
         {
-            var path = $@"{Directory.GetCurrentDirectory()}\Resources\{teste}.html";
+            var path = $@"{Directory.GetCurrentDirectory()}/Resources/{filename}.html";
             var resultHtml = EmailParser.Parse(path);
             var original = new HtmlDocument(); original.Load(path);
             var result = new HtmlDocument(); result.LoadHtml(resultHtml.QuoteChain[0]);

@@ -1,14 +1,9 @@
-name: .NET Core
-
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+name: CI Workflow
+on: [push]
 
 jobs:
   build:
-
+    name: Build and test
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -25,4 +20,4 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test --no-restore
