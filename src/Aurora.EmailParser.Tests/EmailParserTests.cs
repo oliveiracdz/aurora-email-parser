@@ -9,11 +9,11 @@ namespace Aurora.EmailParser.Tests
     public class EmailParserTests
     {
         [Theory]
-        [InlineData("Email-Simples", 2)]
-        [InlineData("Email-Complexo", 1)]
-        public void Quando_HouverQuote_Deve_ExtrairPartes(string emailFile, int quotesLength)
+        [InlineData("Simple", 2)]
+        //[InlineData("WithNestedQuotes", 5, Skip = "Skipped")]
+        public void ShouldFindQuotes(string email, int quotesLength)
         {
-            var context = Setup(emailFile);
+            var context = SetupEmail(email);
 
             context.ParsedHtml.ShouldNotBe(context.OriginalHtml);
             context.Quotes.Count().ShouldBe(quotesLength);
@@ -28,17 +28,17 @@ namespace Aurora.EmailParser.Tests
         }
 
         [Fact]
-        public void Quando_NaoHouverQuote_Deve_RetornarOProprioHtml()
+        public void ShouldHandleEmptyQuotes()
         {
-            var context = Setup("EmailWithNoQuotes");
+            var context = SetupEmail("WithNoQuotes");
 
             context.ParsedHtml.ShouldBe(context.OriginalHtml);
             context.Quotes.ShouldBeEmpty();
         }
 
-        private static SetupContext Setup(string filename)
+        private static SetupContext SetupEmail(string filename)
         {
-            var path = $@"{Directory.GetCurrentDirectory()}/Resources/{filename}.html";
+            var path = $@"{Directory.GetCurrentDirectory()}/Emails/{filename}.html";
             var parseResult = EmailParser.Parse(path);
             var original = new HtmlDocument(); original.Load(path);
             var result = new HtmlDocument(); result.LoadHtml(parseResult.MessageHtml);

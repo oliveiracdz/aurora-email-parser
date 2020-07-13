@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -7,20 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Email-Complexo.html" />
-    <None Remove="Resources\Email-Simples.html" />
-    <None Remove="Resources\EmailWithNoQuotes.html" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Resources\Email-Simples.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Email-Complexo.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\EmailWithNoQuotes.html">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <Content Include="Emails\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
