@@ -1,4 +1,5 @@
-﻿using HtmlAgilityPack;
+﻿using Aurora.EmailParser.Extensions;
+using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -18,7 +19,7 @@ namespace Aurora.EmailParser
             document.Load(path);
 
             var root = document.DocumentNode.SelectSingleNode("//body") ?? document.DocumentNode;
-            var chain = new[] { new EmailPart(ConcatNodes(root.ChildNodes), "") }.AsEnumerable();
+            var chain = new[] { new EmailPart(root.ChildNodes) }.AsEnumerable();
 
             if (TryFindQuoteNode(root.ChildNodes, out var quote))
             {
@@ -38,24 +39,10 @@ namespace Aurora.EmailParser
 
                 if (IsQuoteNode(item) || node.LastChild == item)
                 {
-                    yield return new EmailPart(ConcatNodes(previousNodes), "");
+                    yield return new EmailPart(previousNodes);
 
                     previousNodes.Clear();
                 }
-                // TODO: 
-                //else if (TryFindQuoteNode(item.ChildNodes, out var quote))
-                //{
-                //    part = quote;
-
-                //    yield return SanitizeText(quote.InnerText);
-
-                //    foreach (var x in ExtractChain(quote.ParentNode))
-                //    {
-                //        yield return x;
-                //    }
-
-                //    previousNodes.Clear();
-                //}
 
                 previousNodes.Add(part);
             }
@@ -83,13 +70,10 @@ namespace Aurora.EmailParser
 
         private static bool IsQuoteNode(HtmlNode node)
         {
-            var text = SanitizeText(node.InnerText);
+            var text = node.InnerText.Sanitize();
 
             return QUOTE_TAGS.Any(tag => Regex.Split(text, tag).Length > 1);
         }
-
-        private static string ConcatNodes(IEnumerable<HtmlNode> nodes) => string.Join(string.Empty, nodes.Select(p => p.OuterHtml));
-        private static string SanitizeText(string text) => text.Replace("&nbsp;", string.Empty).Trim();
 
         private static readonly string[] QUOTE_TAGS = new[] {
             "^----------",
