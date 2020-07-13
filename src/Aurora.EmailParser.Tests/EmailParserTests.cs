@@ -39,8 +39,10 @@ namespace Aurora.EmailParser.Tests
         private static SetupContext SetupEmail(string filename)
         {
             var path = $@"{Directory.GetCurrentDirectory()}/Emails/{filename}.html";
-            var parseResult = EmailParser.Parse(path);
             var original = new HtmlDocument(); original.Load(path);
+
+            var parser = new EmailParser();
+            var parseResult = parser.Parse(original.DocumentNode.OuterHtml);
             var result = new HtmlDocument(); result.LoadHtml(parseResult.MessageHtml);
 
             return new SetupContext

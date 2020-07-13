@@ -8,17 +8,9 @@ namespace Aurora.EmailParser
 {
     public sealed class EmailParser
     {
-        /* Refs: 
-         * https://www.mailgun.com/blog/open-sourcing-our-email-signature-parsing-library/
-         * https://sigparser.com/
-         */
-
-        public static EmailParseResult Parse(string path)
+        public EmailParseResult Parse(string content)
         {
-            var document = new HtmlDocument();
-            document.Load(path);
-
-            var root = document.DocumentNode.SelectSingleNode("//body") ?? document.DocumentNode;
+            var root = LoadRootNode(content);
             var chain = new[] { new EmailPart(root.ChildNodes) }.AsEnumerable();
 
             if (TryFindQuoteNode(root.ChildNodes, out var quote))
@@ -27,6 +19,15 @@ namespace Aurora.EmailParser
             }
 
             return new EmailParseResult(chain);
+        }
+
+        private static HtmlNode LoadRootNode(string html)
+        {
+            var document = new HtmlDocument();
+
+            document.LoadHtml(html);
+
+            return document.DocumentNode.SelectSingleNode("//body") ?? document.DocumentNode;
         }
 
         private static IEnumerable<EmailPart> ExtractChain(HtmlNode node)
