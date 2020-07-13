@@ -1,34 +1,36 @@
-﻿using HtmlAgilityPack;
+﻿using Aurora.EmailParser.Extensions;
+using HtmlAgilityPack;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Aurora.EmailParser
 {
-    public class EmailParser
+    public sealed class EmailParser
     {
-        /* Refs: 
-         * https://www.mailgun.com/blog/open-sourcing-our-email-signature-parsing-library/
-         * https://sigparser.com/
-         */
-
-        public static EmailParsed Parse(string path)
+        public EmailParseResult Parse(string content)
         {
-            var document = new HtmlDocument();
-            document.Load(path);
-
-            var root = document.DocumentNode.SelectSingleNode("//body") ?? document.DocumentNode;
-            var chain = new[] { ConcatNodes(root.ChildNodes) }.AsEnumerable();
+            var root = LoadRootNode(content);
+            var chain = new[] { new EmailPart(root.ChildNodes) }.AsEnumerable();
 
             if (TryFindQuoteNode(root.ChildNodes, out var quote))
             {
                 chain = ExtractChain(quote.ParentNode).ToList();
             }
 
-            return new EmailParsed(chain);
+            return new EmailParseResult(chain);
         }
 
-        private static IEnumerable<string> ExtractChain(HtmlNode node)
+        private static HtmlNode LoadRootNode(string html)
+        {
+            var document = new HtmlDocument();
+
+            document.LoadHtml(html);
+
+            return document.DocumentNode.SelectSingleNode("//body") ?? document.DocumentNode;
+        }
+
+        private static IEnumerable<EmailPart> ExtractChain(HtmlNode node)
         {
             var previousNodes = new List<HtmlNode>();
 
@@ -38,24 +40,10 @@ namespace Aurora.EmailParser
 
                 if (IsQuoteNode(item) || node.LastChild == item)
                 {
-                    yield return ConcatNodes(previousNodes);
+                    yield return new EmailPart(previousNodes);
 
                     previousNodes.Clear();
                 }
-                // TODO: 
-                //else if (TryFindQuoteNode(item.ChildNodes, out var quote))
-                //{
-                //    part = quote;
-
-                //    yield return SanitizeText(quote.InnerText);
-
-                //    foreach (var x in ExtractChain(quote.ParentNode))
-                //    {
-                //        yield return x;
-                //    }
-
-                //    previousNodes.Clear();
-                //}
 
                 previousNodes.Add(part);
             }
@@ -83,13 +71,10 @@ namespace Aurora.EmailParser
 
         private static bool IsQuoteNode(HtmlNode node)
         {
-            var text = SanitizeText(node.InnerText);
+            var text = node.InnerText.Sanitize();
 
             return QUOTE_TAGS.Any(tag => Regex.Split(text, tag).Length > 1);
         }
-
-        private static string ConcatNodes(IEnumerable<HtmlNode> nodes) => string.Join(string.Empty, nodes.Select(p => p.OuterHtml));
-        private static string SanitizeText(string text) => text.Replace("&nbsp;", string.Empty).Trim();
 
         private static readonly string[] QUOTE_TAGS = new[] {
             "^----------",
