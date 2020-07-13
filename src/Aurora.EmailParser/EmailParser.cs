@@ -12,7 +12,7 @@ namespace Aurora.EmailParser
          * https://sigparser.com/
          */
 
-        public static EmailParsed Parse(string path)
+        public static EmailParseResult Parse(string path)
         {
             var document = new HtmlDocument();
             document.Load(path);
@@ -25,7 +25,7 @@ namespace Aurora.EmailParser
                 chain = ExtractChain(quote.ParentNode).ToList();
             }
 
-            return new EmailParsed(chain);
+            return new EmailParseResult(chain);
         }
 
         private static IEnumerable<string> ExtractChain(HtmlNode node)

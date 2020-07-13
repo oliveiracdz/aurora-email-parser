@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace Aurora.EmailParser
 {
-    public class EmailParsed
+    public class EmailParseResult
     {
-        public EmailParsed(IEnumerable<string> chain)
+        public EmailParseResult(IEnumerable<string> chain)
         {
             QuoteChain = chain.ToArray();
         }
