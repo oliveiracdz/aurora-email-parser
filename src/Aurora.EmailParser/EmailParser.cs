@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Aurora.EmailParser
 {
-    public class EmailParser
+    public sealed class EmailParser
     {
         /* Refs: 
          * https://www.mailgun.com/blog/open-sourcing-our-email-signature-parsing-library/
@@ -18,7 +18,7 @@ namespace Aurora.EmailParser
             document.Load(path);
 
             var root = document.DocumentNode.SelectSingleNode("//body") ?? document.DocumentNode;
-            var chain = new[] { ConcatNodes(root.ChildNodes) }.AsEnumerable();
+            var chain = new[] { new EmailPart(ConcatNodes(root.ChildNodes), "") }.AsEnumerable();
 
             if (TryFindQuoteNode(root.ChildNodes, out var quote))
             {
@@ -28,7 +28,7 @@ namespace Aurora.EmailParser
             return new EmailParseResult(chain);
         }
 
-        private static IEnumerable<string> ExtractChain(HtmlNode node)
+        private static IEnumerable<EmailPart> ExtractChain(HtmlNode node)
         {
             var previousNodes = new List<HtmlNode>();
 
@@ -38,7 +38,7 @@ namespace Aurora.EmailParser
 
                 if (IsQuoteNode(item) || node.LastChild == item)
                 {
-                    yield return ConcatNodes(previousNodes);
+                    yield return new EmailPart(ConcatNodes(previousNodes), "");
 
                     previousNodes.Clear();
                 }

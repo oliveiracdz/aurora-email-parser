@@ -3,13 +3,19 @@ using System.Linq;
 
 namespace Aurora.EmailParser
 {
-    public class EmailParseResult
+    public sealed class EmailParseResult
     {
-        public EmailParseResult(IEnumerable<string> chain)
+        internal EmailParseResult(IEnumerable<EmailPart> chain)
         {
-            QuoteChain = chain.ToArray();
+            var message = chain.ElementAt(0);
+
+            MessageHtml = message.Html;
+            MessageText = message.Text;
+            Quotes = chain.Skip(1).ToArray();
         }
 
-        public string[] QuoteChain { get; set; }
+        public string MessageText { get; }
+        public string MessageHtml { get; }
+        public EmailPart[] Quotes { get; }
     }
 }
